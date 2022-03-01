@@ -128,7 +128,7 @@ const Welcome = (props) => {
   };
   useEffect(() => {
     getPrivateKeys();
-  }, [priv]);
+  }, []);
   return (
     <div className="container">
       <div className="company-brand">
