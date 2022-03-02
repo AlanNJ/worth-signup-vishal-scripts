@@ -134,6 +134,11 @@ const Signup = () => {
             title: 'Success',
             text: response.data.message,
           });
+          // setUsername('');
+          // setEmail('');
+          // setphoneError('');
+          // setPassword(SuggestPassword);
+          // setconfirmPswd('');
         },
         (error) => {
           const resMessage =
