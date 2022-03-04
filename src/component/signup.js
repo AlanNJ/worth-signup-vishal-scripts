@@ -216,7 +216,7 @@ const Signup = () => {
               )}
             </div>
             <div className="pswd-flex">
-              <div className="input-box">
+              <div className="input-box pswd-input">
                 <span className="details">Password</span>
                 <input
                   type="text"
@@ -227,7 +227,7 @@ const Signup = () => {
                   readOnly
                 />
               </div>
-              <div className="input-box">
+              <div className="input-box pswd-input">
                 <span className="details">Confirm Password</span>
                 <input
                   type="text"

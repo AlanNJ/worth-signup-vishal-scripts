@@ -71,6 +71,9 @@ form .user-details .input-box {
   margin-bottom: 15px;
   width: calc(100% / 2 - 20px);
 }
+form .user-details .pswd-flex .pswd-input {
+  width: 100%;
+}
 form .user-details .confirm-box {
   margin-bottom: 15px;
   width: 100%;
@@ -148,6 +151,7 @@ form .user-details .pswd-flex {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-direction: column;
 }
 form .user-details .user-flex .verify-btn {
   width: 50%;
