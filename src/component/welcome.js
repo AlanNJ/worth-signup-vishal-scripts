@@ -12,12 +12,14 @@ const Welcome = (props) => {
   opts.chainId =
     'd909c4dfab0369c4ae4f4acaf2229cc1e49b3bba0dffb36a37b6174a6f391e2e';
   const client = new dsteem.Client('https://api.wortheum.news');
+  const steemClient = new dsteem.Client('https://api.steemit.com');
 
   //component states
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [privatekey, setprivatekey] = useState('');
   const [privateKeys, setprivateKeys] = useState('');
+  const [sp, setsp] = useState(process.env.REACT_APP_SP);
   const [tx, setTx] = useState(null);
   useEffect(() => {
     if (props.match.path === '/confirm/:confirmationCode') {
@@ -114,8 +116,58 @@ const Welcome = (props) => {
         }
       );
     };
+
+    const sendDelegation = async () => {
+      const lib = dsteem;
+      const client = steemClient;
+      const ops = [];
+      if (sp > 0) {
+        // Converting SP to VESTS
+        const delegation = lib
+          .getVestingSharePrice(
+            await client.database.getDynamicGlobalProperties()
+          )
+          .convert({ amount: sp, symbol: 'WORTH' });
+
+        const delegate_op = [
+          'delegate_vesting_shares',
+          {
+            delegatee: username,
+            delegator: process.env.REACT_APP_USER_CREATOR,
+            vesting_shares: delegation,
+          },
+        ];
+
+        ops.push(delegate_op);
+        console.log('delegation', delegation);
+      }
+      if (process.env.REACT_APP_ACTIVE_KEY) {
+        client.broadcast
+          .sendOperations(
+            ops,
+            lib.PrivateKey.from(process.env.REACT_APP_ACTIVE_KEY)
+          )
+          .then((r) => {
+            console.log(r);
+            Swal.fire(
+              'Congrats!',
+              'Your bonus coin has been transferred to your account',
+              'success'
+            );
+          })
+          .catch((e) => {
+            console.log(e);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: e.message,
+            });
+          });
+      }
+    };
     if (tx) {
       submitTx(username, password);
+      sendDelegation();
     }
   }, [tx]);
   // Generates Aall Private Keys from username and password
