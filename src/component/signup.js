@@ -61,6 +61,10 @@ const Signup = () => {
       setuserError('Username should be atleast 2 characters');
       setuserValidate(false);
     }
+    if (username.length > 18) {
+      setuserError('Username must smaller than characters');
+      setuserValidate(false);
+    }
     if (username === '') {
       setuserError('* Required field');
       setuserValidate(false);

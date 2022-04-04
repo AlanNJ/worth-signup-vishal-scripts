@@ -7,13 +7,15 @@
   font-family: 'Poppins', sans-serif;
 }
 body {
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 10px;
   /* background-color: #fbab7e;
   background-image: linear-gradient(62deg, #fbab7e 0%, #f7ce68 100%); */
+}
+p {
+  width: 100%;
 }
 .container {
   max-width: 900px;
@@ -76,6 +78,9 @@ form .user-details .pswd-flex .pswd-input {
 }
 form .user-details .confirm-box {
   margin-bottom: 15px;
+  width: 100%;
+}
+.content form .user-details .box-image .image img {
   width: 100%;
 }
 form .input-box span.details {
@@ -187,7 +192,7 @@ form .button a {
   background-color: #06d6a9;
   background-image: linear-gradient(62deg, #06d6a9 0%, #06d6a9 100%);
 }
-.btn-flex{
+.btn-flex {
   display: flex;
   justify-content: space-around;
 }
@@ -195,6 +200,23 @@ form .button input:hover {
   /* transform: scale(0.99); */
   background-color: #06d6a9;
   background-image: linear-gradient(250deg, #06d6a9 0%, #06d6a9 100%);
+}
+@media screen and (max-width: 768px) {
+  .btn-flex {
+    flex-direction: column;
+  }
+  .btn-flex .button a {
+    padding: 8px;
+  }
+}
+@media screen and (max-width: 380px) {
+  .btn-flex {
+    flex-direction: column;
+  }
+  .btn-flex .button a {
+    padding: 6px;
+    font-size: 13px;
+  }
 }
 @media (max-width: 584px) {
   .container {
@@ -222,6 +244,6 @@ form .button input:hover {
   }
 }
 
-.swal2-confirm{
+.swal2-confirm {
   background-color: #06d6a9 !important;
 }

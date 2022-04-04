@@ -198,10 +198,11 @@ const Welcome = (props) => {
         <img src={logo} alt="logo" />
       </div>
       <div className="title">Your Account has been successfully confirmed</div>
-      <br/>
+      <br />
       <div className="content">
         <p>
-          Your account is created successfully. Please login to wortheum.news with master password for downloading your keys for daily use
+          Your account is created successfully. Please login to wortheum.news
+          with master password for downloading your keys for daily use
         </p>
         <form>
           <div className="user-details">
@@ -211,16 +212,26 @@ const Welcome = (props) => {
               </span>
               <p> {privatekey}</p>
             </div>
-            <div>
-            <div><img src={pic2}/></div>
-              <div><img src={pic1}/></div>
-             
-              <p>You can download your keys by look into the above instructions or visit wortheum wallet.com </p>
-            <p>&gt; keys & permission</p>
-            <p>&gt; Your keys directory</p>
-            <p>If you have are facing any trouble to login, please join our telegram support group</p>
+            <div className="box-image">
+              <div className="image">
+                <img src={pic2} />
+              </div>
+              <div className="image">
+                <img src={pic1} />
+              </div>
+
+              <p>
+                You can download your keys by look into the above instructions
+                or visit wortheum wallet.com{' '}
+              </p>
+              <p>&gt; keys & permission</p>
+              <p>&gt; Your keys directory</p>
+              <p>
+                If you have are facing any trouble to login, please join our
+                telegram support group
+              </p>
             </div>
-          
+
             {/* <div className="confirm-box">
               <span className="details">
                 <strong>Your Owner key:</strong>
@@ -252,13 +263,18 @@ const Welcome = (props) => {
           </p>
           <br />
           <p>Regards, Team Wortheum.</p>
-          <div className='btn-flex'><div className="button">
-            <a href='https://wortheum.news/' target='_blank'>Login to Wortheum News</a>
+          <div className="btn-flex">
+            <div className="button">
+              <a href="https://wortheum.news/" target="_blank">
+                Login to Wortheum News
+              </a>
+            </div>
+            <div className="button">
+              <a href="https://wortheumwallet.com/login.html" target="_blank">
+                Login to Wortheum Wallet
+              </a>
+            </div>
           </div>
-          <div className="button">
-            <a href='https://wortheumwallet.com/login.html' target='_blank' >Login to Wortheum Wallet</a>
-          </div></div>
-          
         </form>
       </div>
     </div>
