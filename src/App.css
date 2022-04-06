@@ -10,7 +10,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  /* padding: 10px; */
   /* background-color: #fbab7e;
   background-image: linear-gradient(62deg, #fbab7e 0%, #f7ce68 100%); */
 }
@@ -58,7 +58,6 @@ p {
 }
 .content form .user-details .user-msg {
   width: 100%;
-  margin-top: -15px;
 }
 .content form .user-details .pswd-msg {
   margin-top: 0px;
@@ -148,7 +147,7 @@ form .button {
 form .user-details .user-flex {
   width: 100%;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
 }
 form .user-details .pswd-flex {
@@ -201,12 +200,21 @@ form .button input:hover {
   background-color: #06d6a9;
   background-image: linear-gradient(250deg, #06d6a9 0%, #06d6a9 100%);
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 862px) {
+  .btn-flex .button a {
+    padding: 8px;
+  }
+}
+@media screen and (max-width: 650px) {
   .btn-flex {
     flex-direction: column;
   }
   .btn-flex .button a {
     padding: 8px;
+  }
+  form .button {
+    height: 45px;
+    margin: 12px 0;
   }
 }
 @media screen and (max-width: 380px) {
@@ -218,7 +226,7 @@ form .button input:hover {
     font-size: 13px;
   }
 }
-@media (max-width: 584px) {
+@media (max-width: 767px) {
   .container {
     max-width: 100%;
   }
@@ -230,12 +238,18 @@ form .button input:hover {
   form .category {
     width: 100%;
   }
-  .content form .user-details {
+  /* .content form .user-details {
     max-height: 300px;
     overflow-y: scroll;
-  }
+  } */
   .user-details::-webkit-scrollbar {
     width: 5px;
+  }
+  form .user-details .user-flex {
+    flex-direction: column;
+  }
+  form .user-details .user-flex .input-box {
+    margin-top: 8px !important;
   }
 }
 @media (max-width: 459px) {

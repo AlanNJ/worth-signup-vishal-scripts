@@ -55,16 +55,22 @@ const Signup = () => {
   };
   function validateUser() {
     var reWhiteSpace = new RegExp('\\s+');
+    let startwithNum = username.match(new RegExp(/^\d/));
     // setuserError('Account is not available to register');
     // let infocolor = 'red';
     if (username.length < 2) {
       setuserError('Username should be atleast 2 characters');
       setuserValidate(false);
     }
-    if (username.length > 18) {
-      setuserError('Username must smaller than characters');
+    if (username.length > 15) {
+      setuserError('Username must smaller than 15 characters');
       setuserValidate(false);
     }
+    if (startwithNum) {
+      setuserError('First name must be alphabets');
+      setuserValidate(false);
+    }
+
     if (username === '') {
       setuserError('* Required field');
       setuserValidate(false);
@@ -73,7 +79,7 @@ const Signup = () => {
       setuserError('Space are not allowed in username');
       setuserValidate(false);
     }
-    if (username && !reWhiteSpace.test(username)) {
+    if (username && !reWhiteSpace.test(username) && !startwithNum) {
       setuserValidate(true);
     }
   }
@@ -179,16 +185,22 @@ const Signup = () => {
                   id="username"
                   onChange={onChangeUsername}
                 />
+                {userError && (
+                  <div className="user-msg">
+                    <span id="accInfo">{userError}</span>
+                  </div>
+                )}
               </div>
-              <div className="input-box button" onClick={AccSearch}>
+
+              <div
+                style={{ marginTop: '30px' }}
+                className="input-box button"
+                onClick={AccSearch}
+              >
                 <input id="verify-btn" type="button" value="Verify User" />
               </div>
             </div>
-            {userError && (
-              <div className="user-msg">
-                <span id="accInfo">{userError}</span>
-              </div>
-            )}
+
             <div className="input-box">
               <span className="details">Email</span>
               <input
