@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import Swal from 'sweetalert2';
-import AuthService from '../services/signup.services';
-import { Link } from 'react-router-dom';
-import logo from '../images/logo.png';
-import pic1 from '../images/pic1.png';
-import pic2 from '../images/pic2.png';
-const dsteem = require('dsteem');
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import AuthService from "../services/signup.services";
+import { Link } from "react-router-dom";
+import logo from "../images/logo.png";
+import pic1 from "../images/pic1.png";
+import pic2 from "../images/pic2.png";
+const dsteem = require("dsteem");
 
 const Welcome = (props) => {
   let opts = {};
   //connect to production server
-  opts.addressPrefix = 'WTH';
+  opts.addressPrefix = "WTH";
   opts.chainId =
-    'd909c4dfab0369c4ae4f4acaf2229cc1e49b3bba0dffb36a37b6174a6f391e2e';
-  const client = new dsteem.Client('https://api.wortheum.news');
-  const steemClient = new dsteem.Client('https://api.steemit.com');
+    "d909c4dfab0369c4ae4f4acaf2229cc1e49b3bba0dffb36a37b6174a6f391e2e";
+  const client = new dsteem.Client("https://api.wortheum.news");
+  const steemClient = new dsteem.Client("https://api.steemit.com");
 
   //component states
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [privatekey, setprivatekey] = useState('');
-  const [privateKeys, setprivateKeys] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [privatekey, setprivatekey] = useState("");
+  const [privateKeys, setprivateKeys] = useState("");
   const [sp, setsp] = useState(process.env.REACT_APP_SP);
   const [tx, setTx] = useState(null);
+  const [copied, setcopied] = useState(false);
   useEffect(() => {
-    if (props.match.path === '/confirm/:confirmationCode') {
+    if (props.match.path === "/confirm/:confirmationCode") {
       AuthService.verifyUser(props.match.params.confirmationCode).then(
         (response) => {
-          if (response.message.status === 'Active') {
+          if (response.message.status === "Active") {
             setUsername(response.message.username);
             setPassword(response.message.userPassword);
             setprivatekey(response.message.userPassword);
-            Swal.fire('Email confirmed!', '', 'success');
+            Swal.fire("Email confirmed!", "", "success");
             setTx(true);
           }
         },
@@ -43,8 +45,8 @@ const Welcome = (props) => {
             error.message ||
             error.toString();
           Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
+            icon: "error",
+            title: "Oops...",
             text: resMessage,
           });
         }
@@ -54,21 +56,21 @@ const Welcome = (props) => {
   useEffect(() => {
     //create with STEEM function
     const submitTx = async (username, password) => {
-      const ownerKey = dsteem.PrivateKey.fromLogin(username, password, 'owner');
+      const ownerKey = dsteem.PrivateKey.fromLogin(username, password, "owner");
       const activeKey = dsteem.PrivateKey.fromLogin(
         username,
         password,
-        'active'
+        "active"
       );
       const postingKey = dsteem.PrivateKey.fromLogin(
         username,
         password,
-        'posting'
+        "posting"
       );
       const memoKey = dsteem.PrivateKey.fromLogin(
         username,
         password,
-        'memo'
+        "memo"
       ).createPublic(opts.addressPrefix);
       const ownerAuth = {
         weight_threshold: 1,
@@ -89,22 +91,22 @@ const Welcome = (props) => {
         process.env.REACT_APP_ACTIVE_KEY
       );
       const op = [
-        'account_create',
+        "account_create",
         {
-          fee: '1.000 WORTH',
+          fee: "1.000 WORTH",
           creator: process.env.REACT_APP_USER_CREATOR,
           new_account_name: username,
           owner: ownerAuth,
           active: activeAuth,
           posting: postingAuth,
           memo_key: memoKey,
-          json_metadata: '',
+          json_metadata: "",
         },
       ];
       await client.broadcast.sendOperations([op], privateKey).then(
         function (result) {
           let res = `Included in block: ${result.block_num}`;
-          Swal.fire('Good job!', res, 'success');
+          Swal.fire("Good job!", res, "success");
           // setPriv(true);
         },
         function (error) {
@@ -129,10 +131,10 @@ const Welcome = (props) => {
           .getVestingSharePrice(
             await client.database.getDynamicGlobalProperties()
           )
-          .convert({ amount: sp, symbol: 'WORTH' });
+          .convert({ amount: sp, symbol: "WORTH" });
 
         const delegate_op = [
-          'delegate_vesting_shares',
+          "delegate_vesting_shares",
           {
             delegatee: username,
             delegator: process.env.REACT_APP_USER_CREATOR,
@@ -141,7 +143,7 @@ const Welcome = (props) => {
         ];
 
         ops.push(delegate_op);
-        console.log('delegation', delegation);
+        console.log("delegation", delegation);
       }
       if (process.env.REACT_APP_ACTIVE_KEY) {
         client.broadcast
@@ -152,16 +154,16 @@ const Welcome = (props) => {
           .then((r) => {
             console.log(r);
             Swal.fire(
-              'Congrats!',
-              'Your bonus coin has been transferred to your account',
-              'success'
+              "Congrats!",
+              "Your bonus coin has been transferred to your account",
+              "success"
             );
           })
           .catch((e) => {
             console.log(e);
             Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
+              icon: "error",
+              title: "Oops...",
               text: e.message,
             });
           });
@@ -175,7 +177,7 @@ const Welcome = (props) => {
   // Generates Aall Private Keys from username and password
   useEffect(() => {
     const getPrivateKeys = () => {
-      let roles = ['owner', 'active', 'posting', 'memo'];
+      let roles = ["owner", "active", "posting", "memo"];
       const privKeys = {};
       roles.forEach((role) => {
         privKeys[role] = dsteem.PrivateKey.fromLogin(
@@ -210,7 +212,22 @@ const Welcome = (props) => {
               <span className="details">
                 <strong>Your Private key:</strong>
               </span>
-              <p> {privatekey}</p>
+
+              <input
+                type="text"
+                value="P5KCCkTEXyfaoN2F3wAerkD9vCtTSxBvbpvWrTxLNxHuFtVwLPVK"
+                readOnly
+                className="pswd-key-input"
+              />
+              <CopyToClipboard text={privatekey} onCopy={() => setcopied(true)}>
+                <button
+                  className="copy-btn"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  Copy to clipboard
+                </button>
+              </CopyToClipboard>
+              {copied ? <span style={{ color: "red" }}>Copied.</span> : null}
             </div>
             <div className="box-image">
               <div className="image">
@@ -222,7 +239,7 @@ const Welcome = (props) => {
 
               <p>
                 You can download your keys by look into the above instructions
-                or visit wortheum wallet.com{' '}
+                or visit wortheum wallet.com{" "}
               </p>
               <p>&gt; keys & permission</p>
               <p>&gt; Your keys directory</p>

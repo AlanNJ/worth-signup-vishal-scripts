@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-import SuggestPassword from '../services/GenerateKey';
-import AuthService from '../services/signup.services';
-import logo from '../images/logo.png';
-const dsteem = require('dsteem');
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import SuggestPassword from "../services/GenerateKey";
+import AuthService from "../services/signup.services";
+import logo from "../images/logo.png";
+const dsteem = require("dsteem");
 
 const Signup = () => {
-  const client = new dsteem.Client('https://api.wortheum.news');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNo, setphoneNo] = useState('');
+  const client = new dsteem.Client("https://api.wortheum.news");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNo, setphoneNo] = useState("");
   const [password, setPassword] = useState(SuggestPassword);
-  const [confirmPswd, setconfirmPswd] = useState('');
-  const [userError, setuserError] = useState('');
-  const [emailError, setemailError] = useState('');
-  const [phonneError, setphoneError] = useState('');
-  const [pswdError, setpswdError] = useState('');
+  const [confirmPswd, setconfirmPswd] = useState("");
+  const [userError, setuserError] = useState("");
+  const [emailError, setemailError] = useState("");
+  const [phonneError, setphoneError] = useState("");
+  const [pswdError, setpswdError] = useState("");
   const [iseChecked, setiseChecked] = useState(false);
-  const [keyError, setkeyError] = useState('');
+  const [keyError, setkeyError] = useState("");
   const [userValidate, setuserValidate] = useState(false);
-
+  const [isUserVerify, setisUserVerify] = useState(false);
   const onChangeUsername = (e) => {
     const username = e.target.value.toLowerCase();
     setUsername(username);
-    setuserError('');
+    setuserError("");
   };
   const onChangeEmail = (e) => {
     const email = e.target.value;
     setEmail(email);
-    setemailError('');
+    setemailError("");
   };
   const onChangePhone = (e) => {
     const phone = e.target.value;
     setphoneNo(phone);
-    setphoneError('');
+    setphoneError("");
   };
   const onChangePassword = (e) => {
     const password = e.target.value;
@@ -43,43 +43,43 @@ const Signup = () => {
   const onChangeConfirmPswd = (e) => {
     const confirmPswd = e.target.value;
     setconfirmPswd(confirmPswd);
-    setpswdError('');
+    setpswdError("");
   };
   const onChangekeyConfirmed = () => {
     if (iseChecked) {
       setiseChecked(false);
     } else {
       setiseChecked(true);
-      setkeyError('');
+      setkeyError("");
     }
   };
   function validateUser() {
-    var reWhiteSpace = new RegExp('\\s+');
+    var reWhiteSpace = new RegExp("\\s+");
     let startwithNum = username.match(new RegExp(/^\d/));
     // setuserError('Account is not available to register');
     // let infocolor = 'red';
     if (username.length < 2) {
-      setuserError('Username should be atleast 2 characters');
+      setuserError("Username should be atleast 2 characters");
       setuserValidate(false);
     }
     if (username.length > 15) {
-      setuserError('Username must smaller than 15 characters');
+      setuserError("Username must smaller than 15 characters");
       setuserValidate(false);
     }
     if (startwithNum) {
-      setuserError('First name must be alphabets');
+      setuserError("First name must be alphabets");
       setuserValidate(false);
     }
 
-    if (username === '') {
-      setuserError('* Required field');
+    if (username === "") {
+      setuserError("* Required field");
       setuserValidate(false);
     }
     if (reWhiteSpace.test(username)) {
-      setuserError('Space are not allowed in username');
+      setuserError("Space are not allowed in username");
       setuserValidate(false);
     }
-    if (username && !reWhiteSpace.test(username) && !startwithNum) {
+    if (username != "" && !reWhiteSpace.test(username) && !startwithNum) {
       setuserValidate(true);
     }
   }
@@ -88,24 +88,24 @@ const Signup = () => {
       validateUser();
     }
 
-    if (email === '') {
-      setemailError('* Required Field');
+    if (email === "") {
+      setemailError("* Required Field");
       setuserValidate(false);
     }
-    if (phoneNo === '') {
-      setphoneError('* Required field');
+    if (phoneNo === "") {
+      setphoneError("* Required field");
       setuserValidate(false);
     }
     if (password !== confirmPswd) {
-      setpswdError('Password did not match');
+      setpswdError("Password did not match");
       setuserValidate(false);
     }
-    if (confirmPswd === '') {
-      setpswdError('* Required Field');
+    if (confirmPswd === "") {
+      setpswdError("* Required Field");
       setuserValidate(false);
     }
     if (!iseChecked) {
-      setkeyError('Please confirm the above line to continue');
+      setkeyError("Please confirm the above line to continue");
       setuserValidate(false);
     }
     if (
@@ -122,33 +122,45 @@ const Signup = () => {
   const AccSearch = async () => {
     validateUser();
     if (username.length > 2 && userValidate) {
-      const _account = await client.database.call('get_accounts', [[username]]);
+      const _account = await client.database.call("get_accounts", [[username]]);
       // console.log(`_account:`, _account, username.length);
       if (_account.length === 0) {
-        setuserError(' Account is available to register');
+        setuserError(" Account is available to register");
         setuserValidate(false);
-        document.getElementById('accInfo').style.color = '#06d6a9';
+        setisUserVerify(true);
+        document.getElementById("accInfo").style.color = "#06d6a9";
       } else {
-        setuserError(' User cannot be registered/already taken');
+        setuserError(" User cannot be registered/already taken");
         setuserValidate(false);
+        setisUserVerify(true);
       }
     }
   };
   const SubmitUser = async () => {
+    if (!isUserVerify) {
+      Swal.fire({
+        icon: "error",
+        title: "User is not Verified",
+        text: "Please verify user by clicking on check availability button",
+      });
+      return false;
+    }
     validatedata();
-    if (username.length > 2 && userValidate) {
+    if (username.length > 2 && userValidate && isUserVerify) {
       await AuthService.register(username, email, phoneNo, password).then(
         (response) => {
           Swal.fire({
-            icon: 'success',
-            title: 'Success',
+            icon: "success",
+            title: "Success",
             text: response.data.message,
           });
-          // setUsername('');
-          // setEmail('');
-          // setphoneError('');
-          // setPassword(SuggestPassword);
-          // setconfirmPswd('');
+          setUsername("");
+          setEmail("");
+          setphoneError("");
+          setPassword(SuggestPassword);
+          setconfirmPswd("");
+          setisUserVerify(false);
+          setuserValidate(false);
         },
         (error) => {
           const resMessage =
@@ -158,10 +170,14 @@ const Signup = () => {
             error.message ||
             error.toString();
           Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
+            icon: "error",
+            title: "Oops...",
             text: resMessage,
           });
+          setUsername("");
+          setuserError("");
+          setisUserVerify(false);
+          setuserValidate(false);
         }
       );
     }
@@ -193,11 +209,15 @@ const Signup = () => {
               </div>
 
               <div
-                style={{ marginTop: '30px' }}
+                style={{ marginTop: "30px" }}
                 className="input-box button"
                 onClick={AccSearch}
               >
-                <input id="verify-btn" type="button" value="Verify User" />
+                <input
+                  id="verify-btn"
+                  type="button"
+                  value="Check Availability"
+                />
               </div>
             </div>
 
@@ -275,7 +295,7 @@ const Signup = () => {
               </label>
               {keyError && (
                 <div className="result-msg">
-                  <span id="ischecked" style={{ color: '#06d6a9' }}>
+                  <span id="ischecked" style={{ color: "#06d6a9" }}>
                     {keyError}
                   </span>
                 </div>

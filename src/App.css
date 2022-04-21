@@ -79,6 +79,25 @@ form .user-details .confirm-box {
   margin-bottom: 15px;
   width: 100%;
 }
+form .user-details .confirm-box .copy-btn {
+  /* width: 100%; */
+  margin-top: 5px;
+  padding: 0px 5px;
+  outline: none;
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+  background:#06d6a9;
+}
+form .user-details .confirm-box .pswd-key-input{
+  width: 100%;
+  border: none;
+
+}
+
 .content form .user-details .box-image .image img {
   width: 100%;
 }
