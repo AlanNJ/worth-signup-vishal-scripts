@@ -236,7 +236,13 @@ const Signup = () => {
     }
     validatedata();
     if (username.length > 2 && userValidate && isUserVerify) {
-      await AuthService.register(username, email, phoneNo, password).then(
+      await AuthService.register(
+        username,
+        email,
+        phoneNo,
+        password,
+        referUsername
+      ).then(
         (response) => {
           Swal.fire({
             icon: "success",
@@ -248,6 +254,7 @@ const Signup = () => {
           setphoneError("");
           setPassword(SuggestPassword);
           setconfirmPswd("");
+          setreferUsername("");
           setisUserVerify(false);
           setuserValidate(false);
         },

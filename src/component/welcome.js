@@ -25,14 +25,18 @@ const Welcome = (props) => {
   const [sp, setsp] = useState(process.env.REACT_APP_SP);
   const [tx, setTx] = useState(null);
   const [copied, setcopied] = useState(false);
+  const [accountSuccess, setaccountSuccess] = useState(false);
+  const [referalUser, setreferalUser] = useState();
   useEffect(() => {
     if (props.match.path === "/confirm/:confirmationCode") {
       AuthService.verifyUser(props.match.params.confirmationCode).then(
         (response) => {
           if (response.message.status === "Active") {
+            console.log("res0", response.message);
             setUsername(response.message.username);
             setPassword(response.message.userPassword);
             setprivatekey(response.message.userPassword);
+            setreferalUser(response.message.referalUser);
             Swal.fire("Email confirmed!", "", "success");
             setTx(true);
           }
@@ -108,13 +112,14 @@ const Welcome = (props) => {
           let res = `Included in block: ${result.block_num}`;
           Swal.fire("Good job!", res, "success");
           // setPriv(true);
+          setaccountSuccess(true);
         },
         function (error) {
-          // Swal.fire({
-          //   icon: 'error',
-          //   title: 'Oops...',
-          //   text: error,
-          // });
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error,
+          });
           // setPriv(true);
           console.error(error);
         }
@@ -169,9 +174,52 @@ const Welcome = (props) => {
           });
       }
     };
+
+    const sendWorthpower = async () => {
+      const lib = dsteem;
+      const client = steemClient;
+      const ops = [];
+      const powerup_op = [
+        "transfer_to_vesting",
+        {
+          from: process.env.REACT_APP_USER_CREATOR,
+          to: referalUser,
+          amount: process.env.REACT_APP_DELEGATION,
+        },
+      ];
+
+      ops.push(powerup_op);
+      console.log("refferal", referalUser);
+      if (process.env.REACT_APP_ACTIVE_KEY) {
+        client.broadcast
+          .sendOperations(
+            ops,
+            lib.PrivateKey.from(process.env.REACT_APP_ACTIVE_KEY)
+          )
+          .then((r) => {
+            console.log(r);
+            Swal.fire(
+              "Congrats!",
+              "100 Wortheum power has been transferred to your refferal account",
+              "success"
+            );
+          })
+          .catch((e) => {
+            console.log(e);
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: e.message,
+            });
+          });
+      }
+    };
     if (tx) {
       submitTx(username, password);
       sendDelegation();
+    }
+    if (accountSuccess) {
+      sendWorthpower();
     }
   }, [tx]);
   // Generates Aall Private Keys from username and password

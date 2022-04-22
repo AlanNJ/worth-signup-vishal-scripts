@@ -1,16 +1,17 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const User = mongoose.model(
-  'User',
+  "User",
   new mongoose.Schema({
     username: String,
     email: String,
     phoneNumber: Number,
     userPassword: String,
+    referalUser: String,
     status: {
       type: String,
-      enum: ['Pending', 'Active'],
-      default: 'Pending',
+      enum: ["Pending", "Active"],
+      default: "Pending",
     },
     confirmationCode: {
       type: String,
@@ -19,7 +20,7 @@ const User = mongoose.model(
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Role',
+        ref: "Role",
       },
     ],
   })

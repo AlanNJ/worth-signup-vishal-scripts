@@ -1,12 +1,12 @@
-const config = require('../config/auth.config');
-const nodemailer = require('../config/nodemailer.config');
+const config = require("../config/auth.config");
+const nodemailer = require("../config/nodemailer.config");
 
-const db = require('../models');
+const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
   const token = jwt.sign({ email: req.body.email }, config.secret);
@@ -16,6 +16,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
     userPassword: req.body.password,
+    referalUser: req.body.referalUser,
     confirmationCode: token,
   });
 
@@ -45,19 +46,19 @@ exports.signup = (req, res) => {
 
             res.send({
               message:
-                'Thank you! Your account creation request is submitted.A verification mail has been sent on e-mail provided by you. Kindly verify your e-mail to confirm. Best regards,Team Wortheum',
+                "Thank you! Your account creation request is submitted.A verification mail has been sent on e-mail provided by you. Kindly verify your e-mail to confirm. Best regards,Team Wortheum",
             });
             nodemailer.sendConfirmationEmail(
               user.username,
               user.email,
               user.confirmationCode
             );
-            res.redirect('/');
+            res.redirect("/");
           });
         }
       );
     } else {
-      Role.findOne({ name: 'user' }, (err, role) => {
+      Role.findOne({ name: "user" }, (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
@@ -71,7 +72,7 @@ exports.signup = (req, res) => {
           }
           res.send({
             message:
-              'Thank you! Your account creation request is submitted.A verification mail has been sent on e-mail provided by you. Kindly verify your e-mail to confirm. Best regards,Team Wortheum',
+              "Thank you! Your account creation request is submitted.A verification mail has been sent on e-mail provided by you. Kindly verify your e-mail to confirm. Best regards,Team Wortheum",
           });
 
           nodemailer.sendConfirmationEmail(
@@ -89,7 +90,7 @@ exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username,
   })
-    .populate('roles', '-__v')
+    .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -97,7 +98,7 @@ exports.signin = (req, res) => {
       }
 
       if (!user) {
-        return res.status(404).send({ message: 'User Not found.' });
+        return res.status(404).send({ message: "User Not found." });
       }
 
       // var passwordIsValid = bcrypt.compareSync(
@@ -112,9 +113,9 @@ exports.signin = (req, res) => {
       //   });
       // }
 
-      if (user.status != 'Active') {
+      if (user.status != "Active") {
         return res.status(401).send({
-          message: 'Pending Account. Please Verify Your Email!',
+          message: "Pending Account. Please Verify Your Email!",
         });
       }
 
@@ -125,7 +126,7 @@ exports.signin = (req, res) => {
       var authorities = [];
 
       for (let i = 0; i < user.roles.length; i++) {
-        authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
+        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
       res.status(200).send({
         id: user._id,
@@ -145,9 +146,9 @@ exports.verifyUser = (req, res, next) => {
     .then((user) => {
       console.log(user);
       if (!user) {
-        return res.status(404).send({ message: 'User Not found.' });
+        return res.status(404).send({ message: "User Not found." });
       }
-      user.status = 'Active';
+      user.status = "Active";
       res.send({ message: user });
       user.save((err) => {
         if (err) {
@@ -156,5 +157,5 @@ exports.verifyUser = (req, res, next) => {
         }
       });
     })
-    .catch((e) => console.log('error', e));
+    .catch((e) => console.log("error", e));
 };
