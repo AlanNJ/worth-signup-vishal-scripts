@@ -68,6 +68,10 @@ p {
 .content form .user-details .pswd-msg span {
   color: red;
 }
+.content form .user-details .pswd-msg #referal-error {
+  color: #06d6a9;
+}
+
 form .user-details .input-box {
   margin-bottom: 15px;
   width: calc(100% / 2 - 20px);

@@ -20,6 +20,8 @@ const Signup = () => {
   const [keyError, setkeyError] = useState("");
   const [userValidate, setuserValidate] = useState(false);
   const [isUserVerify, setisUserVerify] = useState(false);
+  const [referUsername, setreferUsername] = useState("");
+  const [referalError, setreferalError] = useState("");
   const onChangeUsername = (e) => {
     const username = e.target.value.toLowerCase();
     setUsername(username);
@@ -39,6 +41,11 @@ const Signup = () => {
     const password = e.target.value;
     setPassword(password);
   };
+  const onChangeReferal = (e) => {
+    const referal = e.target.value;
+    setreferUsername(referal);
+    setreferalError("");
+  };
 
   const onChangeConfirmPswd = (e) => {
     const confirmPswd = e.target.value;
@@ -53,39 +60,115 @@ const Signup = () => {
       setkeyError("");
     }
   };
-  function validateUser() {
+
+  function ValidateUser(user) {
+    var len = void 0;
     var reWhiteSpace = new RegExp("\\s+");
-    let startwithNum = username.match(new RegExp(/^\d/));
+    let startwithNum = user.match(new RegExp(/^\d/));
     // setuserError('Account is not available to register');
     // let infocolor = 'red';
-    if (username.length < 2) {
-      setuserError("Username should be atleast 2 characters");
-      setuserValidate(false);
+    var ref = user.split(".");
+    for (var i = 0, len = ref.length; i < len; i++) {
+      var label = ref[i];
+      if (!/^[a-z]/.test(label)) {
+        return {
+          valid: false,
+          error: "Username should start with a letter.",
+        };
+      }
+      if (!/^[a-z0-9-]*$/.test(label)) {
+        return {
+          valid: false,
+          error: "Username should have only letters, digits, or dashes.",
+        };
+      }
+      if (/--/.test(label)) {
+        return {
+          valid: false,
+          error: "Username should have only one dash in a row.",
+        };
+      }
+      if (!/[a-z0-9]$/.test(label)) {
+        return {
+          valid: false,
+          error: "Username should end with a letter or digit.",
+        };
+      }
     }
-    if (username.length > 15) {
-      setuserError("Username must smaller than 15 characters");
-      setuserValidate(false);
+    if (user.length < 3) {
+      return {
+        valid: false,
+        error: "Username should be atleast 2 characters",
+      };
     }
-    if (startwithNum) {
-      setuserError("First name must be alphabets");
-      setuserValidate(false);
+    if (user.length > 15) {
+      return {
+        valid: false,
+        error: "Username must smaller than 15 characters",
+      };
     }
-
-    if (username === "") {
-      setuserError("* Required field");
-      setuserValidate(false);
-    }
-    if (reWhiteSpace.test(username)) {
-      setuserError("Space are not allowed in username");
-      setuserValidate(false);
-    }
-    if (username != "" && !reWhiteSpace.test(username) && !startwithNum) {
-      setuserValidate(true);
-    }
+    return {
+      valid: true,
+      error: "Username is valid",
+    };
   }
+  // function validateUser() {
+  //   var suffix = "";
+  //   var reWhiteSpace = new RegExp("\\s+");
+  //   let startwithNum = username.match(new RegExp(/^\d/));
+  //   // setuserError('Account is not available to register');
+  //   // let infocolor = 'red';
+  //   if (username.length < 3) {
+  //     setuserError("Username should be atleast 2 characters");
+  //     setuserValidate(false);
+  //   }
+  //   if (username.length > 15) {
+  //     setuserError("Username must smaller than 15 characters");
+  //     setuserValidate(false);
+  //   }
+  //   if (startwithNum) {
+  //     setuserError("First name must be alphabets");
+  //     setuserValidate(false);
+  //   }
+
+  //   if (username === "") {
+  //     setuserError("* Required field");
+  //     setuserValidate(false);
+  //   }
+  //   if (reWhiteSpace.test(username)) {
+  //     setuserError("Space are not allowed in username");
+  //     setuserValidate(false);
+  //   }
+  //   if (username != "" && !reWhiteSpace.test(username) && !startwithNum) {
+  //     setuserValidate(true);
+  //   }
+  //   if (/\./.test(username)) {
+  //     suffix = "Each account segment should ";
+  //   }
+  //   var ref = username.split(".");
+  //   for (var i = 0, len = ref.length; i < len; i++) {
+  //     var label = ref[i];
+  //     if (!/^[a-z]/.test(label)) {
+  //       setuserError("Username should start with a letter.");
+  //       setuserValidate(false);
+  //     }
+  //     if (!/^[a-z0-9-]*$/.test(label)) {
+  //       setuserError("Username should have only letters, digits, or dashes.");
+  //       setuserValidate(false);
+  //     }
+  //     if (/--/.test(label)) {
+  //       setuserError("Username should have only one dash in a row.");
+  //       setuserValidate(false);
+  //     }
+  //     if (!/[a-z0-9]$/.test(label)) {
+  //       setuserError("Username should end with a letter or digit.");
+  //       setuserValidate(false);
+  //     }
+  //   }
+  // }
   function validatedata() {
     if (!username) {
-      validateUser();
+      ValidateUser(username);
     }
 
     if (email === "") {
@@ -120,19 +203,25 @@ const Signup = () => {
     }
   }
   const AccSearch = async () => {
-    validateUser();
-    if (username.length > 2 && userValidate) {
-      const _account = await client.database.call("get_accounts", [[username]]);
-      // console.log(`_account:`, _account, username.length);
-      if (_account.length === 0) {
-        setuserError(" Account is available to register");
-        setuserValidate(false);
-        setisUserVerify(true);
-        document.getElementById("accInfo").style.color = "#06d6a9";
-      } else {
-        setuserError(" User cannot be registered/already taken");
-        setuserValidate(false);
-        setisUserVerify(true);
+    const res = ValidateUser(username);
+    if (!res.valid) {
+      setuserError(res.error);
+      document.getElementById("accInfo").style.color = "red";
+      return false;
+    } else {
+      if (username.length > 2) {
+        const _account = await client.database.call("get_accounts", [
+          [username],
+        ]);
+        // console.log(`_account:`, _account, username.length);
+        if (_account.length === 0) {
+          setuserError(" Account is available to register");
+          setisUserVerify(true);
+          document.getElementById("accInfo").style.color = "#06d6a9";
+        } else {
+          setuserError(" User cannot be registered/already taken");
+          setisUserVerify(false);
+        }
       }
     }
   };
@@ -193,7 +282,7 @@ const Signup = () => {
           <div className="user-details">
             <div className="user-flex">
               <div className="input-box">
-                <span className="details">Username</span>
+                <span className="details">Username *</span>
                 <input
                   type="text"
                   value={username}
@@ -222,7 +311,7 @@ const Signup = () => {
             </div>
 
             <div className="input-box">
-              <span className="details">Email</span>
+              <span className="details">Email *</span>
               <input
                 type="text"
                 placeholder="Enter your email"
@@ -237,7 +326,7 @@ const Signup = () => {
               )}
             </div>
             <div className="input-box">
-              <span className="details">Phone Number</span>
+              <span className="details">Phone Number *</span>
               <input
                 type="number"
                 placeholder="Enter your number"
@@ -253,7 +342,7 @@ const Signup = () => {
             </div>
             <div className="pswd-flex">
               <div className="input-box pswd-input">
-                <span className="details">Password</span>
+                <span className="details">Password *</span>
                 <input
                   type="text"
                   placeholder="Enter your password"
@@ -264,7 +353,7 @@ const Signup = () => {
                 />
               </div>
               <div className="input-box pswd-input">
-                <span className="details">Confirm Password</span>
+                <span className="details">Confirm Password *</span>
                 <input
                   type="text"
                   placeholder="Confirm your password"
@@ -275,6 +364,42 @@ const Signup = () => {
                 {pswdError && (
                   <div className="pswd-msg">
                     <span id="pswd-error">{pswdError}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="pswd-flex">
+              <div className="input-box pswd-input">
+                <span className="details">Referal User (optional)</span>
+                <input
+                  type="text"
+                  placeholder="Enter your referal username"
+                  id="confirmPswd"
+                  value={referUsername}
+                  onChange={onChangeReferal}
+                  onBlur={(e) => {
+                    const res = ValidateUser(e.target.value);
+                    if (!res.valid) {
+                      setreferalError(res.error);
+
+                      return false;
+                    } else {
+                      if (e.target.value.length > 2) {
+                        const _account = client.database.call("get_accounts", [
+                          [e.target.value],
+                        ]);
+                        if (_account.length === 0) {
+                          setreferalError("Account is not available");
+                        } else {
+                          setreferalError("Account is verified");
+                        }
+                      }
+                    }
+                  }}
+                />
+                {referalError && (
+                  <div className="pswd-msg">
+                    <p id="referal-error">{referalError}</p>
                   </div>
                 )}
               </div>
@@ -291,13 +416,13 @@ const Signup = () => {
               &nbsp;&nbsp;
               <label htmlFor="confirm">
                 Did you write your password and saved it somewhere very safe and
-                secure.
+                securely.
               </label>
               {keyError && (
                 <div className="result-msg">
-                  <span id="ischecked" style={{ color: "#06d6a9" }}>
+                  <p id="ischecked" style={{ color: "#06d6a9" }}>
                     {keyError}
-                  </span>
+                  </p>
                 </div>
               )}
             </div>
