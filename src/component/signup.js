@@ -388,18 +388,24 @@ const Signup = () => {
                     const res = ValidateUser(e.target.value);
                     if (!res.valid) {
                       setreferalError(res.error);
-
                       return false;
                     } else {
                       if (e.target.value.length > 2) {
-                        const _account = client.database.call("get_accounts", [
-                          [e.target.value],
-                        ]);
-                        if (_account.length === 0) {
-                          setreferalError("Account is not available");
-                        } else {
-                          setreferalError("Account is verified");
-                        }
+                        client.database
+                          .call("get_accounts", [[e.target.value]])
+                          .then(
+                            function (result) {
+                              if (result.length === 0) {
+                                setreferalError("Wrong Username...!!");
+                              } else {
+                                setreferalError("User is available!");
+                              }
+                              // console.log("res", result);
+                            },
+                            function (error) {
+                              console.error(error);
+                            }
+                          );
                       }
                     }
                   }}
