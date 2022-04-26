@@ -27,6 +27,7 @@ const Welcome = (props) => {
   const [copied, setcopied] = useState(false);
   const [accountSuccess, setaccountSuccess] = useState(false);
   const [referalUser, setreferalUser] = useState();
+  console.log("referalUser", referalUser);
   useEffect(() => {
     if (props.match.path === "/confirm/:confirmationCode") {
       AuthService.verifyUser(props.match.params.confirmationCode).then(
