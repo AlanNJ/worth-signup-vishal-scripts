@@ -23,7 +23,7 @@ const Welcome = (props) => {
   const [privatekey, setprivatekey] = useState("");
   const [privateKeys, setprivateKeys] = useState("");
   const [sp, setsp] = useState(process.env.REACT_APP_SP);
-  const [tx, setTx] = useState(null);
+  const [tx, setTx] = useState(false);
   const [copied, setcopied] = useState(false);
   const [accountSuccess, setaccountSuccess] = useState(false);
   const [referalUser, setreferalUser] = useState();
@@ -54,6 +54,7 @@ const Welcome = (props) => {
             title: "Oops...",
             text: resMessage,
           });
+          setTx(false);
         }
       );
     }
@@ -112,7 +113,6 @@ const Welcome = (props) => {
         function (result) {
           let res = `Included in block: ${result.block_num}`;
           Swal.fire("Good job!", res, "success");
-          // setPriv(true);
           setaccountSuccess(true);
         },
         function (error) {
@@ -121,7 +121,7 @@ const Welcome = (props) => {
             title: "Oops...",
             text: error,
           });
-          // setPriv(true);
+          setaccountSuccess(false);
           console.error(error);
         }
       );
@@ -217,9 +217,11 @@ const Welcome = (props) => {
     };
     if (tx) {
       submitTx(username, password);
-      sendDelegation();
     }
     if (accountSuccess) {
+      sendDelegation();
+    }
+    if (accountSuccess && referalUser) {
       sendWorthpower();
     }
   }, [tx]);
