@@ -176,6 +176,14 @@ const Welcome = (props) => {
       }
     };
 
+    if (tx) {
+      submitTx(username, password);
+    }
+    if (accountSuccess) {
+      sendDelegation();
+    }
+  }, [tx]);
+  useEffect(() => {
     const sendWorthpower = async () => {
       const lib = dsteem;
       const client = steemClient;
@@ -215,16 +223,10 @@ const Welcome = (props) => {
           });
       }
     };
-    if (tx) {
-      submitTx(username, password);
-    }
-    if (accountSuccess) {
-      sendDelegation();
-    }
-    if (accountSuccess && referalUser) {
+    if (referalUser && accountSuccess) {
       sendWorthpower();
     }
-  }, [tx]);
+  }, [accountSuccess]);
   // Generates Aall Private Keys from username and password
   useEffect(() => {
     const getPrivateKeys = () => {
